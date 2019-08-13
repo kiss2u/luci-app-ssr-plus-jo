@@ -1,5 +1,4 @@
 #!/bin/sh
-
 uci -q batch <<-EOF >/dev/null
 	delete ucitrack.@shadowsocksr[-1]
 	add ucitrack shadowsocksr
