@@ -9,6 +9,8 @@ local fs = require "nixio.fs"
 local sys = require "luci.sys"
 local sid = arg[1]
 local uuid = luci.sys.exec("cat /proc/sys/kernel/random/uuid")
+local http = luci.http	
+local ucursor = require "luci.model.uci".cursor()
 
 local function isKcptun(file)
     if not fs.access(file, "rwx", "rx", "rx") then
@@ -95,12 +97,19 @@ obfs = {
 	"tls1.2_ticket_auth",
 }
 
+local obfs_opts = {
+	"none",
+	"http",
+	"tls",
+}
+
 local securitys = {
     "auto",
     "none",
     "aes-128-gcm",
     "chacha20-poly1305"
 }
+
 
 
 m = Map(shadowsocksr, translate("Edit ShadowSocksR Server"))
@@ -115,7 +124,7 @@ s = m:section(NamedSection, sid, "servers")
 s.anonymous = true
 s.addremove   = false
 
-o = s:option(DummyValue,"ssr_url","SSR URL") 
+o = s:option(DummyValue,"ssr_url","配置链接") 
 o.rawhtml  = true
 o.template = "shadowsocksr/ssrurl"
 o.value =sid
@@ -134,7 +143,6 @@ o.description = translate("Using incorrect encryption mothod may causes service 
 o = s:option(Value, "alias", translate("Alias(optional)"))
 
 o = s:option(Value, "server", translate("Server Address"))
-o.datatype = "host"
 o.rmempty = false
 
 o = s:option(Value, "server_port", translate("Server Port"))
@@ -145,6 +153,11 @@ o.rmempty = false
 -- o.datatype = "uinteger"
 -- o.default = 60
 -- o.rmempty = false
+
+o = s:option(Value, "weight", translate("Weight"))
+o.datatype = "uinteger"
+o.default = 10
+o.rmempty = false
 
 o = s:option(Value, "password", translate("Password"))
 o.password = true
@@ -175,13 +188,24 @@ for _, v in ipairs(obfs) do o:value(v) end
 o.rmempty = true
 o:depends("type", "ssr")
 
+o = s:option(ListValue, "obfs_opts", translate("Obfs (可选)"))
+for _, v in ipairs(obfs_opts) do o:value(v) end
+o.rmempty = true
+o:depends("type", "ss")
+
+
+o = s:option(Value, "obfs_host", translate("Obfs-host (可选)"))
+o:depends("type", "ss")
+
 o = s:option(Value, "obfs_param", translate("Obfs param(optional)"))
 o:depends("type", "ssr")
 
+
+
+
 -- AlterId
 o = s:option(Value, "alter_id", translate("AlterId"))
-o.datatype = "port"
-o.default = 16
+o.default = 100
 o.rmempty = true
 o:depends("type", "v2ray")
 
@@ -300,7 +324,7 @@ o.rmempty = true
 o = s:option(Value, "uplink_capacity", translate("Uplink Capacity"))
 o.datatype = "uinteger"
 o:depends("transport", "kcp")
-o.default = 5
+o.default = 50
 o.rmempty = true
 
 o = s:option(Value, "downlink_capacity", translate("Downlink Capacity"))
