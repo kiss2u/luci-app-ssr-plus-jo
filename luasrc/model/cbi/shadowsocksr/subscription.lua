@@ -21,10 +21,6 @@ o = s:option(Flag, "auto_update", translate("Auto Update"))
 o.rmempty = false
 o.description = translate("Auto Update Server subscription, GFW list and CHN route")
 
-s:append(Template("shadowsocksr/v2ray_version"))
-o.default = "/usr/bin/v2ray/"      
-o.rmempty = false
-
 o = s:option(ListValue, "auto_update_time", translate("Update time (every day)"))
 for t = 0,23 do
 o:value(t, t..":00")
