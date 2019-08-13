@@ -1,5 +1,8 @@
 -- Licensed to the public under the GNU General Public License v3.
-
+local d = require "luci.dispatcher"
+local fs = require "nixio.fs"
+local sys = require "luci.sys"
+local uci = require "luci.model.uci".cursor()
 local m, s, o
 local shadowsocksr = "shadowsocksr"
 
@@ -9,63 +12,30 @@ uci:foreach("shadowsocksr", "servers", function(s)
   server_count = server_count + 1
 end)
 
-m = Map(shadowsocksr,  translate("Servers subscription and manage"))
+m = Map(shadowsocksr)
 
--- Server Subscribe
-
-s = m:section(TypedSection, "server_subscribe")
-s.anonymous = true
-
-o = s:option(Flag, "auto_update", translate("Auto Update"))
-o.rmempty = false
-o.description = translate("Auto Update Server subscription, GFW list and CHN route")
-
-
-o = s:option(ListValue, "auto_update_time", translate("Update time (every day)"))
-for t = 0,23 do
-o:value(t, t..":00")
-end
-o.default=2
-o.rmempty = false
-
-o = s:option(DynamicList, "subscribe_url", translate("Subscribe URL"))
-o.rmempty = true
-
-o = s:option(Flag, "proxy", translate("Through proxy update"))
-o.rmempty = false
-o.description = translate("Through proxy update list, Not Recommended ")
-
-o = s:option(Button,"update",translate("Update"))
-o.inputstyle = "reload"
-o.write = function()
-  luci.sys.call("bash /usr/share/shadowsocksr/subscribe.sh >>/tmp/ssrplus.log 2>&1")
-  luci.http.redirect(luci.dispatcher.build_url("admin", "services", "shadowsocksr", "servers"))
-end
-
-o = s:option(Button,"delete",translate("Delete all severs"))
-o.inputstyle = "reset"
-o.description = string.format(translate("Server Count") ..  ": %d", server_count)
-o.write = function()
-  uci:delete_all("shadowsocksr", "servers", function(s) return true end)
-  luci.sys.call("uci commit shadowsocksr && /etc/init.d/shadowsocksr stop") 
-  luci.http.redirect(luci.dispatcher.build_url("admin", "services", "shadowsocksr", "servers"))
-end
-
+m:section(SimpleSection).template  = "shadowsocksr/status"
 -- [[ Servers Manage ]]--
 s = m:section(TypedSection, "servers")
 s.anonymous = true
+s.description = string.format(translate("Server Count") ..  ": %d", server_count)
 s.addremove = true
 s.sortable = false
 s.template = "cbi/tblsection"
-s.extedit = luci.dispatcher.build_url("admin/services/shadowsocksr/servers/%s")
-function s.create(...)
-	local sid = TypedSection.create(...)
-	if sid then
-		luci.http.redirect(s.extedit % sid)
-		return
-	end
+s.extedit = d.build_url("admin", "services", "shadowsocksr", "servers", "%s")
+
+
+function s.create(e, t)
+    local e = TypedSection.create(e, t)
+    luci.http.redirect(
+        d.build_url("admin", "services", "shadowsocksr", "servers", e))
 end
 
+function s.remove(t, a)
+    s.map.proceed = true
+    s.map:del(a)
+    luci.http.redirect(d.build_url("admin", "services", "shadowsocksr", "servers"))
+end
 o = s:option(DummyValue, "type", translate("Type"))
 function o.cfgvalue(...)
 	return Value.cfgvalue(...) or translate("")
@@ -80,6 +50,14 @@ o = s:option(DummyValue, "server", translate("Server Address"))
 function o.cfgvalue(...)
 	return Value.cfgvalue(...) or "?"
 end
+
+
+o = s:option(DummyValue, "encrypt_method", translate("Encrypt Method"))
+function o.cfgvalue(...)
+	return Value.cfgvalue(...) or "?"
+end
+
+
 
 o = s:option(DummyValue, "server_port", translate("Server Port"))
 function o.cfgvalue(...)
@@ -100,4 +78,11 @@ function o.cfgvalue(...)
 	return Value.cfgvalue(...) or "0"
 end
 
+
+o = s:option(DummyValue,"server",translate("Ping Latency"))
+o.template="shadowsocksr/ping"
+o.width="10%"
+
+
+m:append(Template("shadowsocksr/server_list"))
 return m
