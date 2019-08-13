@@ -19,4 +19,5 @@
     git clone https://github.com/Ameykyl/luci-app-ssr-plus
     #回到源码根目录
     cd ../..
+    #选择要编译的APP
     make menuconfig
