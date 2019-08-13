@@ -22,7 +22,7 @@ config PACKAGE_$(PKG_NAME)_INCLUDE_Shadowsocks
 	
 config PACKAGE_$(PKG_NAME)_INCLUDE_Simple_Obfs
 	bool "Include Shadowsocks Simple Obfs Plugin"
-	default y
+	default n
 	
 	
 config PACKAGE_$(PKG_NAME)_INCLUDE_ShadowsocksR_Server
@@ -59,7 +59,7 @@ config PACKAGE_$(PKG_NAME)_INCLUDE_privoxy
 	
 config PACKAGE_$(PKG_NAME)_INCLUDE_ChinaDNS
 	bool "Include ChinaDNS"
-	default y
+	default n
 
 
 
