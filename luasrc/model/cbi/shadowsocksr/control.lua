@@ -14,6 +14,8 @@ o.datatype = "ip4addr"
 o = s:taboption("wan_ac", DynamicList, "wan_fw_ips", translate("WAN Force Proxy IP"))
 o.datatype = "ip4addr"
 
+
+
 -- Part of LAN
 s:tab("lan_ac", translate("LAN IP AC"))
 
@@ -32,7 +34,6 @@ luci.ip.neighbors({ family = 4 }, function(entry)
                o:value(entry.dest:string())
        end
 end)
-
 o = s:taboption("lan_ac", DynamicList, "lan_gm_ips", translate("Game Mode Host List"))
 o.datatype = "ipaddr"
 luci.ip.neighbors({ family = 4 }, function(entry)
@@ -40,6 +41,15 @@ luci.ip.neighbors({ family = 4 }, function(entry)
                o:value(entry.dest:string())
        end
 end)
+
+
+s = m:section(TypedSection, "domain_white_list", translate("Domain White List"))
+s.template = "cbi/tblsection"
+s.anonymous = true
+s.addremove = true
+s.sortable  = true
+
+o = s:option(Value, "domain_names", translate("Domain name (keyword only)"))
 
 -- Part of Self
 -- s:tab("self_ac", translate("Router Self AC"))
