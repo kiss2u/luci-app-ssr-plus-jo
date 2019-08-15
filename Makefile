@@ -78,9 +78,9 @@ define Package/luci-app-ssr-plus
             +PACKAGE_$(PKG_NAME)_INCLUDE_Simple_Obfs:simple-obfs \
             +PACKAGE_$(PKG_NAME)_INCLUDE_V2ray:v2ray \
             +PACKAGE_$(PKG_NAME)_INCLUDE_Kcptun:kcptun-client \
-             +PACKAGE_$(PKG_NAME)_INCLUDE_haproxy:haproxy \
-             +PACKAGE_$(PKG_NAME)_INCLUDE_privoxy:privoxy \
-             +PACKAGE_$(PKG_NAME)_INCLUDE_ChinaDNS:ChinaDNS \
+            +PACKAGE_$(PKG_NAME)_INCLUDE_haproxy:haproxy \
+            +PACKAGE_$(PKG_NAME)_INCLUDE_privoxy:privoxy \
+            +PACKAGE_$(PKG_NAME)_INCLUDE_ChinaDNS:ChinaDNS \
             +PACKAGE_$(PKG_NAME)_INCLUDE_ShadowsocksR_Server:shadowsocksr-libev-server \
             +PACKAGE_$(PKG_NAME)_INCLUDE_ShadowsocksR_Socks:shadowsocksr-libev-ssr-local
 endef
