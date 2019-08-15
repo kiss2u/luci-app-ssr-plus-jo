@@ -20,7 +20,7 @@ s = m:section(TypedSection, "servers")
 s.anonymous = true
 s.description = string.format(translate("Server Count") ..  ": %d", server_count)
 s.addremove = true
-s.sortable = false
+s.sortable = true
 s.template = "cbi/tblsection"
 s.extedit = d.build_url("admin", "services", "shadowsocksr", "servers", "%s")
 
