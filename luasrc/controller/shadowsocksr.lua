@@ -21,7 +21,7 @@ function index()
 		entry({"admin", "services", "shadowsocksr", "control"},cbi("shadowsocksr/control"),_("Access Control"), 30).leaf = true
 
 		entry({"admin", "services", "shadowsocksr", "list"},form("shadowsocksr/list"),_("GFW List"), 40).leaf = true
-                 entry({"admin", "services", "shadowsocksr", "udp2raw"},cbi("shadowsocksr/udp2raw"), _("udp2raw tunnel"),41).leaf = true
+                
 		entry({"admin", "services", "shadowsocksr", "automatic"},cbi("shadowsocksr/automatic"), _("Automatic Switching"),45).leaf = true
 
 		entry({"admin", "services", "shadowsocksr", "advanced"},cbi("shadowsocksr/advanced"),_("Advanced Settings"), 50).leaf = true
