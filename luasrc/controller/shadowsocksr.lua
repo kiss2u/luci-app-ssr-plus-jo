@@ -21,7 +21,7 @@ function index()
 		entry({"admin", "services", "shadowsocksr", "control"},cbi("shadowsocksr/control"),_("Access Control"), 30).leaf = true
 
 		entry({"admin", "services", "shadowsocksr", "list"},form("shadowsocksr/list"),_("GFW List"), 40).leaf = true
-
+                 entry({"admin", "services", "shadowsocksr", "udp2raw"},cbi("shadowsocksr/udp2raw"), _("udp2raw tunnel"),41).leaf = true
 		entry({"admin", "services", "shadowsocksr", "automatic"},cbi("shadowsocksr/automatic"), _("Automatic Switching"),45).leaf = true
 
 		entry({"admin", "services", "shadowsocksr", "advanced"},cbi("shadowsocksr/advanced"),_("Advanced Settings"), 50).leaf = true
@@ -61,6 +61,14 @@ function act_status()
 
 
 	end
+	--检测UDP2RAW状态
+    if tonumber(luci.sys.exec("ps -w | grep udp2raw |grep -v grep| wc -l"))>0 then
+		e.udp2raw= true  
+end
+--检测UDPspeeder状态
+    if tonumber(luci.sys.exec("ps -w | grep udpspeeder |grep -v grep| wc -l"))>0 then
+		e.udpspeeder= true  
+end
     --检测SOCKS5状态
 	if tonumber(luci.sys.exec("ps -w | grep ssr-local |grep -v grep| wc -l"))>0 then
 		e.SOCKS5= true
