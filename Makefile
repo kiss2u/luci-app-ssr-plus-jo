@@ -2,67 +2,36 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=luci-app-ssr-plus
 PKG_VERSION:=1
-PKG_RELEASE:=115
+PKG_RELEASE:=98
 
 PKG_CONFIG_DEPENDS:= CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_Shadowsocks \
 	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_V2ray \
 	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_Kcptun \
-                 CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_Shadowsocks_Server \
 	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_ShadowsocksR_Server \
-                 CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_Shadowsocks_Socks \
-	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_ShadowsocksR_Socks \
-	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_Simple_Obfs
+	CONFIG_PACKAGE_$(PKG_NAME)_INCLUDE_ShadowsocksR_Socks
 
 include $(INCLUDE_DIR)/package.mk
 
 define Package/$(PKG_NAME)/config
 config PACKAGE_$(PKG_NAME)_INCLUDE_Shadowsocks
 	bool "Include Shadowsocks New Version"
-	default y
-	
-config PACKAGE_$(PKG_NAME)_INCLUDE_Simple_Obfs
-	bool "Include Shadowsocks Simple Obfs Plugin"
 	default n
-	
-	
-config PACKAGE_$(PKG_NAME)_INCLUDE_ShadowsocksR_Server
-	bool "Include ShadowsockR Server (ssr-server)"
-	default y
-
-config PACKAGE_$(PKG_NAME)_INCLUDE_ShadowsocksR_Socks
-	bool "Include ShadowsocksR Socks (ssr-local)"
-	default y
-
-config PACKAGE_$(PKG_NAME)_INCLUDE_Shadowsocks_Server
-	bool "Include Shadowsocks Server (ss-server)"
-	default y
-
-config PACKAGE_$(PKG_NAME)_INCLUDE_Shadowsocks_Socks
-	bool "Include Shadowsocks Socks (ss-local)"
-	default y
 	
 config PACKAGE_$(PKG_NAME)_INCLUDE_V2ray
 	bool "Include V2ray"
-	default y
+	default n
 	
 config PACKAGE_$(PKG_NAME)_INCLUDE_Kcptun
 	bool "Include Kcptun"
-	default y
-
-config PACKAGE_$(PKG_NAME)_INCLUDE_haproxy
-	bool "Include haproxy"
-	default n
-
-config PACKAGE_$(PKG_NAME)_INCLUDE_privoxy
-	bool "Include privoxy"
 	default n
 	
-config PACKAGE_$(PKG_NAME)_INCLUDE_ChinaDNS
-	bool "Include ChinaDNS"
+config PACKAGE_$(PKG_NAME)_INCLUDE_ShadowsocksR_Server
+	bool "Include ShadowsocksR Server"
 	default n
-
-
-
+	
+config PACKAGE_$(PKG_NAME)_INCLUDE_ShadowsocksR_Socks
+	bool "Include ShadowsocksR Socks and Tunnel"
+	default n
 endef
 
 define Package/luci-app-ssr-plus
@@ -71,16 +40,10 @@ define Package/luci-app-ssr-plus
 	SUBMENU:=3. Applications
 	TITLE:=SS/SSR/V2Ray LuCI interface
 	PKGARCH:=all
-	DEPENDS:=+shadowsocksr-libev-alt +ipset +ip-full +iptables-mod-tproxy +dnsmasq-full +coreutils +coreutils-base64 +bash +pdnsd-alt +wget \          
-	    +PACKAGE_$(PKG_NAME)_INCLUDE_Shadowsocks:shadowsocks-libev-ss-redir \
-            +PACKAGE_$(PKG_NAME)_INCLUDE_Shadowsocks_Socks:shadowsocks-libev-ss-local \
-            +PACKAGE_$(PKG_NAME)_INCLUDE_Shadowsocks_Server:shadowsocks-libev-ss-server \
-            +PACKAGE_$(PKG_NAME)_INCLUDE_Simple_Obfs:simple-obfs \
+	DEPENDS:=+shadowsocksr-libev-alt +ipset +ip-full +iptables-mod-tproxy +dnsmasq-full +coreutils +coreutils-base64 +bash +pdnsd-alt +wget \
+            +PACKAGE_$(PKG_NAME)_INCLUDE_Shadowsocks:shadowsocks-libev-ss-redir \
             +PACKAGE_$(PKG_NAME)_INCLUDE_V2ray:v2ray \
             +PACKAGE_$(PKG_NAME)_INCLUDE_Kcptun:kcptun-client \
-            +PACKAGE_$(PKG_NAME)_INCLUDE_haproxy:haproxy \
-            +PACKAGE_$(PKG_NAME)_INCLUDE_privoxy:privoxy \
-            +PACKAGE_$(PKG_NAME)_INCLUDE_ChinaDNS:ChinaDNS \
             +PACKAGE_$(PKG_NAME)_INCLUDE_ShadowsocksR_Server:shadowsocksr-libev-server \
             +PACKAGE_$(PKG_NAME)_INCLUDE_ShadowsocksR_Socks:shadowsocksr-libev-ssr-local
 endef
