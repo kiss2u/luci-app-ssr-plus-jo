@@ -23,3 +23,5 @@
     cd ../..
     
     make menuconfig
+    #编译
+    make package/luci-app-ssr-plus-jo/{clean,compile} V=s
