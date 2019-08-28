@@ -1,7 +1,4 @@
 
-<!DOCTYPE html>
-<html>
-
 <head>
     <meta charset="utf-8">
     <meta http-equiv="x-dns-prefetch-control" content="on">
@@ -22,7 +19,6 @@
     <link rel="preconnect" href="https://dt.skk.moe">
     <link rel="shortcut icon" type="image/ico" href="https://cdn.jsdelivr.net/npm/skx@0.0.1">
     <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no,minimal-ui">
-    <title>IP 地址查询</title>
     <style>
         .ip-title {
             font-weight: bold;
@@ -40,7 +36,7 @@
             display: inline-block;
             width: 52%;
             vertical-align:bottom;
-            transform:translateY(5%);
+            transform:translateY(10%);
         }
         
         .ip-result {
@@ -58,33 +54,30 @@
         .ip-geo {
             color: #444;
             font-size:15px;
-            line-height:20px;
             white-space: nowrap;  /*强制span不换行*/
             display: inline-block;  /*将span当做块级元素对待*/
             width: 40%;  /*限制宽度*/
             overflow: hidden;  /*超出宽度部分隐藏*/
             text-overflow: ellipsis;  /*超出部分以点号代替*/
             vertical-align:bottom;
-            transform:translateY(15%);
+            transform:translateY(2%);
         }
         
         .ip-checking {
             color: #444;
             font-size:15px;
-            line-height:20px;
             display: inline-block;
             vertical-align:bottom;
             width: 29%;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-            transform:translateY(12%);
+            transform:translateY(10%);
         }
 
         .sk-text-success {
             color: #32b643;
             font-size:15px;
-            line-height:20px;
             display: inline-block;
             vertical-align:bottom;
             width: 48%;
@@ -92,13 +85,12 @@
             overflow: hidden;
             text-overflow: ellipsis;
             text-align: left;
-            transform:translateY(12%);
+            transform:translateY(10%);
         }
 
         .sk-text-error {
             color: #e85600;
             font-size:15px;
-            line-height:20px;
             display: inline-block;
             vertical-align:bottom;
             width: 48%;
@@ -106,7 +98,7 @@
             overflow: hidden;
             text-overflow: ellipsis;
             text-align: left;
-            transform:translateY(12%);
+            transform:translateY(10%);
         }
 
         h3 {
@@ -141,7 +133,7 @@
                 <span class="ip-title">淘宝&nbsp;&nbsp;&nbsp;&nbsp;国内:</span><span class="ip-result" id="ip-taobao"></span> <span class="ip-geo" id="ip-taobao-ipip"></span>
             </p>
             <p>
-                <span class="ip-title">IP.SB&nbsp;&nbsp;海外:</span><span class="ip-result" id="ip-ipsb"></span> <span class="ip-geo" id="ip-ipsb-geo"></span>
+                <span class="ip-title">IPAPI&nbsp;&nbsp;海外:</span><span class="ip-result" id="ip-ipapi"></span> <span class="ip-geo" id="ip-ipapi-geo"></span>
             </p>
             <p>
                 <span class="ip-title">IPIFY&nbsp;&nbsp;海外:</span><span class="ip-result" id="ip-ipify"></span> <span class="ip-geo" id="ip-ipify-ipip"></span>
@@ -167,7 +159,7 @@
         </div>
     </div>
     <div>
-        <p style="float: right; margin-top: 30px; font-size:15px; padding-right: 10px">Powered by <a onclick="return ip_skk()" href="javascript:void(0);">ip.skk.moe</a></p>
+        <p style="float: right; margin-top: 4px; font-size:15px; padding-right: 10px">Powered by <a onclick="return ip_skk()" href="javascript:void(0);">ip.skk.moe</a></p>
     </div>
     </td></tr>
 	</table>
@@ -183,7 +175,7 @@
         $$.getElementById('ip-taobao').innerHTML = '查询中...';
         $$.getElementById('ip-ipify').innerHTML = '查询中...';
         $$.getElementById('ip-ipipnet').innerHTML = '查询中...';
-        $$.getElementById('ip-ipsb').innerHTML = '查询中...';
+        $$.getElementById('ip-ipapi').innerHTML = '查询中...';
         let random = parseInt(Math.random() * 100000000);
         let IP = {
             get: (url, type) =>
@@ -249,9 +241,12 @@
                 $$.getElementById('ip-taobao').innerHTML = data.ip;
                 IP.parseIPIpip(data.ip, 'ip-taobao-ipip');
             },
-            getIpsbIP: (data) => {
-                $$.getElementById('ip-ipsb').innerHTML = data.address;
-                $$.getElementById('ip-ipsb-geo').innerHTML = `${data.country} ${data.province} ${data.city} ${data.isp.name}`
+            getIPApiIP: () => {
+                IP.get(`https://ipapi.co/json?z=${random}`, 'json')
+                    .then(resp => {
+                        $$.getElementById('ip-ipapi').innerHTML = resp.data.ip;
+                        IP.parseIPIpip(resp.data.ip, 'ip-ipapi-geo');
+                    })
             },
             getIpifyIP: () => {
                 IP.get(`https://api.ipify.org/?format=json&z=${random}`, 'json')
@@ -303,6 +298,7 @@
 	      HTTP.runcheck();
 	      IP.getIpipnetIP();
 	      IP.getIpifyIP();
+	      IP.getIPApiIP();
 	      IP.getWebrtcIP();
 
 	      window.onload=myip_Load();
@@ -315,25 +311,19 @@
 	         tbipScript.src='https://www.taobao.com/help/getip.php';
 	         tbip.appendChild( tbipScript);
 
-	         var sbip = document.getElementsByTagName('HEAD').item(0);
-	         var sbipScript= document.createElement("script");
-	         sbipScript.async = "async";
-	         sbipScript.src='https://ipv4.ip.sb/addrinfo?callback=IP.getIpsbIP';
-	         sbip.appendChild( sbipScript);
-
 	         const $$ = document;
 	         random = parseInt(Math.random() * 100000000);
 	         window.ipCallback = (data) => IP.getTaobaoIP(data);
 		       HTTP.runcheck();
 		       IP.getIpipnetIP();
 		       IP.getIpifyIP();
+		       IP.getIPApiIP();
 		       IP.getWebrtcIP();
        	   setTimeout("myip_Load()",1000*8);
 		   }
 
     </script>
     <script async="async" src="https://www.taobao.com/help/getip.php"></script>
-    <script async="async" src="https://ipv4.ip.sb/addrinfo?callback=IP.getIpsbIP"></script>
 </body>
 
-</html>
+
