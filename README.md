@@ -15,14 +15,10 @@
 ```Brach
     #源码根目录，进入package文件夹
     cd package
-    #创建一个openwrt-packages
-    mkdir openwrt-packages
-    #进入新建的文件夹
-    cd openwrt-packages
     #下载源码
     git clone https://github.com/Ameykyl/luci-app-ssr-plus-jo
     #回到源码根目录
-    cd ../..
+    cd ..
     make menuconfig
     #编译
     make package/luci-app-ssr-plus-jo/{clean,compile} V=s
