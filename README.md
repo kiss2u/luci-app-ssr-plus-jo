@@ -9,6 +9,8 @@
 
 3.增加ping延迟
 
+4.udp2raw/UDPspeeder 支持
+
 ## 使用方法
 ```Brach
     #源码根目录，进入package文件夹
