@@ -111,7 +111,7 @@ gen_config_file() {
 	local local_port=$(uci_get_by_name $1 local_port)
 	iptables -A SS_WAN_DROP -p tcp --dport $local_port -j DROP
 
-		local stype=$(uci_get_by_name $1 type)
+	local stype=$(uci_get_by_name $1 type)
 	local plugin=$(uci_get_by_name $1 plugin)
 	if [ "$stype" == "ss" ] ;then
 		if [ "$plugin" == "none" ] ;then
@@ -150,7 +150,7 @@ EOF
 		{
 		    
 		    "server": "$hostip",
-		     "server_port": $(uci_get_by_name $1 server_port),
+		    "server_port": $port,
 		    "local_address": "0.0.0.0",
 		    "local_port": $local_port,
 		    "password": "$(uci_get_by_name $1 password)",
@@ -745,6 +745,33 @@ start_redir() {
 
 	return $?
 }
+start_udp2raw() {
+	cat > /var/etc/udp2raw.conf <<EOF
+# udp2raw config file
+-c
+-l0.0.0.0:$(uci_get_by_type udp2raw local_port)
+-r$(uci_get_by_type udp2raw server):$(uci_get_by_type udp2raw server_port)
+-a
+-k $(uci_get_by_type udp2raw key)
+--raw-mode $(uci_get_by_type udp2raw raw_mode)
+--seq-mode $(uci_get_by_type udp2raw seq_mode)
+--cipher-mode $(uci_get_by_type udp2raw cipher_mode)
+--auth-mode $(uci_get_by_type udp2raw auth_mode)
+EOF
+	/usr/bin/udp2raw --conf-file /var/etc/udp2raw.conf >/dev/null 2>&1 &
+}
+
+start_udpspeeeder() {
+	/usr/bin/udpspeeder -c -l0.0.0.0:$(uci_get_by_type udpspeeder local_port) \
+		-r$(uci_get_by_type udpspeeder server):$(uci_get_by_type udpspeeder server_port) \
+		-k $(uci_get_by_type udpspeeder key) \
+		--mode $(uci_get_by_type udpspeeder speeder_mode) \
+		--mtu $(uci_get_by_type udpspeeder mtu) \
+		-f$(uci_get_by_type udpspeeder fec) \
+		-q$(uci_get_by_type udpspeeder queue_len) \
+		--timeout $(uci_get_by_type udpspeeder timeout) \
+		>/dev/null 2>&1 &
+}
 
 gen_service_file() {
 	if [ $(uci_get_by_name $1 fast_open) = "1" ] ;then
@@ -924,13 +951,26 @@ rules() {
 	fi
 }
 
-start() { 
+start() {
+        case "$(uci_get_by_type udp2raw udp2raw_enable)" in
+		1|on|true|yes|enabled)
+			start_udp2raw
+			;;
+	esac
+	case "$(uci_get_by_type udpspeeder udpspeeder_enable)" in
+		1|on|true|yes|enabled)
+			start_udpspeeeder
+			;;
+	esac
+
 	if [ -z "$switch_server" ] ;then
 		GLOBAL_SERVER=$(uci_get_by_type global global_server)
 	else
 		GLOBAL_SERVER=$switch_server
 		switch_enable=1
+           
 	fi
+
 
 	HAPROXY_MODE="0"
 	if [ "$GLOBAL_SERVER" = "__haproxy__" ]; then
@@ -1034,7 +1074,9 @@ stop() {
 	killall -q -9 obfs-local
 	killall -q -9 obfs-server
 	killall -q -9 chinadns
-
+        killall -q -9 udp2raw
+	killall -q -9 udpspeeder
+	/usr/bin/udp2raw --clear >/dev/null
 	if [ -f /var/run/pdnsd.pid ] ;then
 		kill $(cat /var/run/pdnsd.pid) >/dev/null 2>&1
 	else
