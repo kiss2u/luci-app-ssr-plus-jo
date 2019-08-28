@@ -250,4 +250,28 @@ do
 			/etc/init.d/shadowsocksr restart
 		fi
 	fi
+#udp2raw
+	if [ $(uci_get_by_type udp2raw udp2raw_enable) = 1 ] ;then
+		ucount=`ps -w | grep udp2raw |grep -v grep| wc -l`
+		if [ $ucount = 0 ] ;then
+			/usr/bin/udp2raw --clear >/dev/null
+			/usr/bin/udp2raw --conf-file /var/etc/udp2raw.conf >/dev/null 2>&1 &
+		fi
+	fi
+#udpspeeder
+	if [ $(uci_get_by_type udpspeeder udpspeeder_enable) = 1 ] ;then
+		scount=`ps -w | grep udpspeeder |grep -v grep| wc -l`
+		if [ $scount = 0 ] ;then
+			/usr/bin/udpspeeder -c -l0.0.0.0:$(uci_get_by_type udpspeeder local_port) \
+				-r$(uci_get_by_type udpspeeder server):$(uci_get_by_type udpspeeder server_port) \
+				-k $(uci_get_by_type udpspeeder key) \
+				--mode $(uci_get_by_type udpspeeder speeder_mode) \
+				--mtu $(uci_get_by_type udpspeeder mtu) \
+				-f$(uci_get_by_type udpspeeder fec) \
+				-q$(uci_get_by_type udpspeeder queue_len) \
+				--timeout $(uci_get_by_type udpspeeder timeout) \
+				>/dev/null 2>&1 &
+		fi
+	fi
 done
+
