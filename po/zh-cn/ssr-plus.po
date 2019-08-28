@@ -262,6 +262,39 @@ msgstr "IPK 版本号"
 msgid "KcpTun Version"
 msgstr "KcpTun 版本号"
 
+msgid "udp2raw tunnel"
+msgstr "隧道"
+
+msgid "Enable udp2raw"
+msgstr "启用 udp2raw"
+
+msgid "Seq Mode"
+msgstr "Seq 模式"
+
+msgid "udp2raw Version"
+msgstr "udp2raw 版本"
+
+msgid "udp2raw tunnel Project"
+msgstr "udp2raw 项目"
+
+
+msgid "UDPspeeder Version"
+msgstr "UDPspeeder 版本"
+
+
+msgid "UDPspeeder Project"
+msgstr "UDPspeeder 项目"
+
+
+msgid "Enable UDPspeeder"
+msgstr "启用 UDPspeeder"
+
+msgid "Speeder Mode"
+msgstr "Speeder 模式"
+
+msgid "Mtu"
+msgstr "Mtu 参数"
+
 
 msgid "AlterId"
 msgstr "额外ID"
