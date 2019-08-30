@@ -145,7 +145,7 @@ msgid "SSR Server"
 msgstr "服务端"
 
 msgid "ShadowSocksR Server"
-msgstr "ShadowSocksR 服务端"
+msgstr "SS/SSR/V2RAY 服务端"
 
 msgid "ShadowSocksR Server is running"
 msgstr "ShadowSocksR 服务端运行中"
