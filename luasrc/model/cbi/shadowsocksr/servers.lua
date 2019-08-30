@@ -14,6 +14,7 @@ end)
 
 m = Map(shadowsocksr)
 
+
 m:section(SimpleSection).template  = "shadowsocksr/status"
 -- [[ Servers Manage ]]--
 s = m:section(TypedSection, "servers")
@@ -51,9 +52,8 @@ function o.cfgvalue(...)
 end
 
 o = s:option(DummyValue, "encrypt_method", translate("Encrypt Method"))
-function o.cfgvalue(...)
-	return Value.cfgvalue(...) or "?"
-end
+o.width="10%"
+
 
 o = s:option(DummyValue, "server_port", translate("Server Port"))
 function o.cfgvalue(...)
